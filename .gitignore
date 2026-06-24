@@ -59,4 +59,4 @@ coveragereport/
 TestResult.xml
 nunit-*.xml
 
-
+test.runsettings
