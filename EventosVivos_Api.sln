@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventosVivos_Api", "EventosVivos_Api\EventosVivos_Api.csproj", "{01FF41A0-FC50-49C0-9C92-3F2638D419F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventosVivos_Api.Tests", "EventosVivos_Api.Tests\EventosVivos_Api.Tests.csproj", "{C177BF1D-36F4-4F08-B74E-4FE7A296DE4D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{01FF41A0-FC50-49C0-9C92-3F2638D419F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01FF41A0-FC50-49C0-9C92-3F2638D419F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01FF41A0-FC50-49C0-9C92-3F2638D419F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01FF41A0-FC50-49C0-9C92-3F2638D419F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C177BF1D-36F4-4F08-B74E-4FE7A296DE4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C177BF1D-36F4-4F08-B74E-4FE7A296DE4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C177BF1D-36F4-4F08-B74E-4FE7A296DE4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C177BF1D-36F4-4F08-B74E-4FE7A296DE4D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B58F2812-B7DE-4DB0-8F04-2F965B246714}
+	EndGlobalSection
+EndGlobal
