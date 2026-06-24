@@ -1,0 +1,16 @@
+@EventosVivos_Api_HostAddress = http://localhost:5234
+
+POST {{EventosVivos_Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin1234"
+}
+
+###
+
+POST {{EventosVivos_Api_HostAddress}}/api/auth/logout
+Authorization: Bearer {{token}}
+
+###
