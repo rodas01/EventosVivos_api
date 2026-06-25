@@ -1,3 +1,4 @@
+using EventosVivos_Api.Models;
 using EventosVivos_Api.Models.Security;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -11,6 +12,14 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, string, Identi
         : base(options)
     {
     }
+
+    public DbSet<Venue> Venues { get; set; }
+    public DbSet<EstadoEvento> EstadosEventos { get; set; }
+    public DbSet<EstadoReserva> EstadosReservas { get; set; }
+    public DbSet<TipoEvento> TiposEventos { get; set; }
+    public DbSet<Cliente> Clientes { get; set; }
+    public DbSet<Evento> Eventos { get; set; }
+    public DbSet<Reserva> Reservas { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,5 +45,9 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, string, Identi
         modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("AspNetUserLogins", "Security");
         modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("AspNetRoleClaims", "Security");
         modelBuilder.Entity<IdentityUserToken<string>>().ToTable("AspNetUserTokens", "Security");
+
+        modelBuilder.Entity<Cliente>()
+            .HasIndex(c => c.Correo)
+            .IsUnique();
     }
 }

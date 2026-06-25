@@ -1,7 +1,9 @@
 using System.Security.Claims;
 using System.Text;
 using EventosVivos_Api.Data;
+using EventosVivos_Api.Middleware;
 using EventosVivos_Api.Models.Security;
+using EventosVivos_Api.Services;
 using EventosVivos_Api.Services.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -35,6 +37,10 @@ builder.Services
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<JwtTokenService>();
+builder.Services.AddScoped<IVenueService, VenueService>();
+builder.Services.AddScoped<ITipoEventoService, TipoEventoService>();
+builder.Services.AddScoped<IEventoService, EventoService>();
+builder.Services.AddScoped<IReservaService, ReservaService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -118,6 +124,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 await DatabaseSeeder.SeedAsync(app.Services);
 if (args.Contains("--seed-only", StringComparer.OrdinalIgnoreCase))
