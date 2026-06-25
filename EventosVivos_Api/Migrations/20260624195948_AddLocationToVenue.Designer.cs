@@ -4,6 +4,7 @@ using EventosVivos_Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventosVivos_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260624195948_AddLocationToVenue")]
+    partial class AddLocationToVenue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,6 +168,7 @@ namespace EventosVivos_Api.Migrations
                         .HasColumnName("id_cliente");
 
                     b.Property<string>("CodigoReserva")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("codigo_reserva");
 
@@ -177,10 +181,6 @@ namespace EventosVivos_Api.Migrations
                     b.Property<int>("EventoId")
                         .HasColumnType("int")
                         .HasColumnName("id_evento");
-
-                    b.Property<DateTime?>("FechaModificacion")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("fecha_modificacion");
 
                     b.Property<DateTime>("FechaReserva")
                         .HasColumnType("datetime2")
