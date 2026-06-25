@@ -1,0 +1,49 @@
+<!-- TopNavBar -->
+<nav
+  class="bg-surface-container-lowest dark:bg-on-background w-full top-0 sticky z-50 border-b border-outline-variant dark:border-on-secondary-fixed-variant flat no shadows"
+>
+  <div
+    class="flex justify-between items-center h-16 px-margin-desktop max-w-[1280px] mx-auto w-full"
+  >
+    <div class="flex items-center gap-xl">
+      <span class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed"
+        >EventosVivos</span
+      >
+      <div class="hidden md:flex items-center gap-lg">
+        <a
+          class="text-primary dark:text-primary-fixed font-bold border-b-2 border-primary pb-1 font-label-md text-label-md"
+          href="#"
+          >Descubrir</a
+        >
+
+        <a
+          class="text-secondary dark:text-secondary-fixed-dim hover:text-primary transition-colors font-label-md text-label-md"
+          href="#"
+          >Mis Reservas</a
+        >
+      </div>
+    </div>
+    <div class="flex items-center gap-md">
+      <div
+        class="hidden md:flex bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant items-center gap-2"
+      >
+        <span class="material-symbols-outlined text-outline">search</span>
+        <input
+          id="search-input"
+          aria-label="Buscar eventos"
+          class="bg-transparent border-none focus:ring-0 text-body-sm w-48"
+          placeholder="Buscar eventos..."
+          type="text"
+        />
+      </div>
+      <button
+        class="text-primary font-bold font-label-md text-label-md px-4 py-2 hover:bg-surface-container-low transition-all rounded-lg"
+      >
+        Iniciar Sesión
+      </button>
+      <span class="material-symbols-outlined text-primary cursor-pointer text-3xl"
+        >account_circle</span
+      >
+    </div>
+  </div>
+</nav>
