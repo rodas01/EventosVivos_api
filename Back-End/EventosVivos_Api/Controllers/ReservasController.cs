@@ -26,7 +26,6 @@ namespace EventosVivos_Api.Controllers
         /// <param name="dto">Datos de la reserva a crear.</param>
         /// <returns>La reserva creada en caso de éxito, o un BadRequest con el error correspondiente.</returns>
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> RealizarReserva([FromBody] CrearReservaDto dto)
         {
             if (!ModelState.IsValid)

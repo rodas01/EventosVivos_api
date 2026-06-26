@@ -43,6 +43,39 @@ namespace EventosVivos_Api.Services
             return Result<Evento>.Success(evento);
         }
 
+        public async Task<Result<EventoDto>> GetEventoByIdAsync(int id)
+        {
+            var evento = await _context.Eventos
+                .Include(e => e.Venue)
+                .FirstOrDefaultAsync(e => e.EventoId == id);
+
+            if (evento == null)
+            {
+                return Result<EventoDto>.Failure(MessageConstants.EventNotFoundError);
+            }
+
+            var totalReservas = await GetTotalReservationsAsync(evento.EventoId);
+            var estadoCalculado = (evento.EstadoEventoId == EventStatusConstants.Activo && DateTime.UtcNow > evento.FechaFin) ? EventStatusConstants.Completado : evento.EstadoEventoId;
+
+            var eventoDto = new EventoDto
+            {
+                EventoId = evento.EventoId,
+                NombreEvento = evento.NombreEvento,
+                Descripcion = evento.Descripcion,
+                Venue = new VenueDto { Nombre = evento.Venue?.Nombre ?? string.Empty },
+                Capacidad = evento.Capacidad,
+                FechaInicio = evento.FechaInicio,
+                FechaFin = evento.FechaFin,
+                Precio = evento.Precio,
+                TipoEventoId = evento.TipoEventoId,
+                EstadoEventoId = estadoCalculado,
+                SoldOut = totalReservas >= evento.Capacidad,
+                EntradasDisponibles = evento.Capacidad - totalReservas
+            };
+
+            return Result<EventoDto>.Success(eventoDto);
+        }
+
         public async Task<IEnumerable<EventoDto>> GetEventosAsync(FiltrosEventoDto filtrosDto)
         {
             var query = _context.Eventos.Include(e => e.Venue).AsQueryable();
@@ -90,6 +123,7 @@ namespace EventosVivos_Api.Services
 
                 eventosDto.Add(new EventoDto
                 {
+                    EventoId = evento.EventoId,
                     NombreEvento = evento.NombreEvento,
                     Descripcion = evento.Descripcion,
                     Venue = new VenueDto { Nombre = evento.Venue.Nombre },
@@ -99,7 +133,8 @@ namespace EventosVivos_Api.Services
                     Precio = evento.Precio,
                     TipoEventoId = evento.TipoEventoId,
                     EstadoEventoId = estadoCalculado,
-                    SoldOut = totalReservas >= evento.Capacidad
+                    SoldOut = totalReservas >= evento.Capacidad,
+                    EntradasDisponibles = evento.Capacidad - totalReservas
                 });
             }
 

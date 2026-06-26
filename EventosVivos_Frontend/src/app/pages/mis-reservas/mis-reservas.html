@@ -1,0 +1,96 @@
+<!-- Search Section -->
+<section
+  class="mb-2xl relative overflow-hidden rounded-xl p-xl md:p-2xl bg-surface-container-lowest border border-outline-variant"
+>
+  <div class="relative z-10">
+    <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg mb-md text-on-surface">
+      Consulta tus entradas
+    </h1>
+    <p class="font-body-base text-body-base text-secondary mb-xl">
+      Ingresa el correo electrónico con el que realizaste la compra para visualizar el historial de
+      tus reservas.
+    </p>
+    <form class="flex flex-col md:flex-row gap-md" [formGroup]="searchForm" (ngSubmit)="onSearch()">
+      <div class="flex-grow relative">
+        <span
+          class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline"
+          >mail</span
+        >
+        <input
+          id="email"
+          formControlName="email"
+          aria-label="Correo electrónico"
+          class="w-full pl-12 pr-md py-md rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all outline-none font-body-base"
+          placeholder="ejemplo@correo.com"
+          type="email"
+        />
+      </div>
+      <button
+        class="px-xl py-md bg-primary text-on-primary rounded-lg font-title-lg flex items-center justify-center gap-xs hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        type="submit"
+        [disabled]="isSearching()"
+      >
+        @if (isSearching()) {
+          <span>Consultando...</span>
+          <span class="material-symbols-outlined animate-spin">sync</span>
+        } @else {
+          <span>Consultar Reservas</span>
+          <span class="material-symbols-outlined">arrow_forward</span>
+        }
+      </button>
+    </form>
+
+    @if (searchForm.get('email')?.invalid && searchForm.get('email')?.touched) {
+      <p class="text-error text-body-sm mt-2">
+        @if (searchForm.get('email')?.errors?.['required']) {
+          El correo electrónico es obligatorio.
+        } @else if (searchForm.get('email')?.errors?.['email']) {
+          Por favor ingresa un correo electrónico válido.
+        }
+      </p>
+    }
+
+    @if (errorMessage()) {
+      <div class="p-md rounded-lg bg-error-container text-on-error-container mt-md border border-error/20 flex items-center gap-sm">
+        <span class="material-symbols-outlined">error</span>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="flex items-center justify-between mb-xl mt-md">
+    <h2 class="font-headline-md text-headline-md">Resultados de búsqueda</h2>
+    <div class="hidden md:flex gap-sm">
+      <span class="flex items-center gap-xs font-label-md text-label-md text-secondary">
+        <span class="w-3 h-3 rounded-full bg-tertiary"></span> Confirmada
+      </span>
+      <span class="flex items-center gap-xs font-label-md text-label-md text-secondary">
+        <span class="w-3 h-3 rounded-full bg-secondary-container"></span>
+        Pendiente
+      </span>
+      <span class="flex items-center gap-xs font-label-md text-label-md text-secondary">
+        <span class="w-3 h-3 rounded-full bg-error"></span> Cancelada
+      </span>
+    </div>
+  </div>
+
+  @if (hasSearched()) {
+    @if (reservas().length > 0) {
+      <div class="space-y-md">
+        @for (reserva of reservas(); track reserva.reservaId) {
+          <app-card-reserva [reserva]="reserva" (cancel)="onCancelReserva($event)"></app-card-reserva>
+        }
+      </div>
+    } @else {
+      <div class="p-xl text-center bg-surface-container-low border border-outline-variant border-dashed rounded-xl">
+        <span class="material-symbols-outlined text-outline text-4xl mb-sm">search_off</span>
+        <p class="text-secondary font-body-base">No se encontraron reservas asociadas a este correo electrónico.</p>
+      </div>
+    }
+  } @else {
+    <div class="p-xl text-center bg-surface-container-low border border-outline-variant border-dashed rounded-xl">
+      <span class="material-symbols-outlined text-outline text-4xl mb-sm">info</span>
+      <p class="text-secondary font-body-base">Ingresa tu correo electrónico arriba para ver tu historial de reservas.</p>
+    </div>
+  }
+</section>

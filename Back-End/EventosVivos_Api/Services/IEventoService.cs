@@ -12,5 +12,6 @@ namespace EventosVivos_Api.Services
         Task<Result<Evento>> CrearEventoAsync(CrearEventoDto eventoDto);
         Task<IEnumerable<EventoDto>> GetEventosAsync(FiltrosEventoDto filtrosDto);
         Task<IEnumerable<ReporteEventoDto>> GetReporteEventosAsync();
+        Task<Result<EventoDto>> GetEventoByIdAsync(int id);
     }
 }

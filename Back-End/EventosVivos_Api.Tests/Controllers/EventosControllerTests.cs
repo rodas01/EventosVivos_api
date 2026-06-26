@@ -218,5 +218,59 @@ namespace EventosVivos_Api.Tests.Controllers
             Assert.AreEqual(8, returnedReport.First().ReservasVendidas);
             Assert.AreEqual(400f, returnedReport.First().TotalIngresos);
         }
+
+        [TestMethod]
+        public async Task GetEventoById_ReturnsOkResult_WithEventoDto()
+        {
+            // Arrange
+            Assert.IsNotNull(_mockEventoService);
+            Assert.IsNotNull(_controller);
+
+            var expectedEvento = new EventoDto
+            {
+                NombreEvento = "Concierto Rock",
+                Descripcion = "Concierto",
+                Capacidad = 100,
+                Precio = 50f,
+                TipoEventoId = "CON",
+                EstadoEventoId = EventStatusConstants.Activo,
+                Venue = new VenueDto { Nombre = "Estadio" },
+                SoldOut = false
+            };
+
+            _mockEventoService.Setup(s => s.GetEventoByIdAsync(1))
+                .ReturnsAsync(Result<EventoDto>.Success(expectedEvento));
+
+            // Act
+            var result = await _controller.GetEventoById(1);
+
+            // Assert
+            var okResult = result as OkObjectResult;
+            Assert.IsNotNull(okResult);
+            var returnedEvento = okResult.Value as EventoDto;
+            Assert.IsNotNull(returnedEvento);
+            Assert.AreEqual("Concierto Rock", returnedEvento.NombreEvento);
+        }
+
+        [TestMethod]
+        public async Task GetEventoById_ReturnsNotFoundResult_WhenEventDoesNotExist()
+        {
+            // Arrange
+            Assert.IsNotNull(_mockEventoService);
+            Assert.IsNotNull(_controller);
+
+            _mockEventoService.Setup(s => s.GetEventoByIdAsync(999))
+                .ReturnsAsync(Result<EventoDto>.Failure(MessageConstants.EventNotFoundError));
+
+            // Act
+            var result = await _controller.GetEventoById(999);
+
+            // Assert
+            var notFoundResult = result as NotFoundObjectResult;
+            Assert.IsNotNull(notFoundResult);
+            
+            dynamic? errorMsg = notFoundResult.Value;
+            Assert.IsNotNull(errorMsg);
+        }
     }
 }

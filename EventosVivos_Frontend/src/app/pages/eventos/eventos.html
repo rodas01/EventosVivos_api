@@ -1,0 +1,154 @@
+<div [formGroup]="filterForm">
+  <!-- Search & Hero Area -->
+  <header class="mb-2xl">
+    <h1 class="font-display-lg text-display-lg text-on-background mb-lg font-bold">
+      Explora Experiencias Culturales
+    </h1>
+    <div class="relative w-50 group">
+      <span
+        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary text-2xl"
+        >search</span
+      >
+      <form class="w-full" (submit)="$event.preventDefault()">
+        <input
+          id="search-input"
+          aria-label="Buscar eventos"
+          class="w-full pl-12 pr-6 py-4 rounded-xl border border-outline-variant focus:border-primary focus:ring-primary focus:ring-offset-2 transition-all text-body-base shadow-sm"
+          placeholder="Buscar por título, ponente o artista..."
+          type="text"
+          formControlName="titulo"
+        />
+      </form>
+    </div>
+  </header>
+  <div class="flex flex-col lg:flex-row gap-xl">
+    <!-- Filter Sidebar -->
+    <aside class="w-full lg:w-72 flex-shrink-0">
+      <form
+        class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg sticky top-24"
+        (submit)="$event.preventDefault()"
+      >
+        <div class="flex items-center justify-between mb-lg">
+          <h3 class="font-title-lg text-title-lg text-on-background font-bold">Filtros</h3>
+          <button
+            type="button"
+            (click)="clearFilters()"
+            class="text-primary font-label-md text-label-md hover:underline"
+          >
+            Limpiar todo
+          </button>
+        </div>
+        <div class="space-y-lg">
+          <!-- Type Filter -->
+          <div>
+            <span class="font-label-md text-label-md text-secondary block mb-md"
+              >TIPO DE EVENTO</span
+            >
+            <div class="space-y-base" formGroupName="tipoEventos">
+              @for (tipo of tipoEventos(); track tipo.tipoEventoId) {
+                <label class="flex items-center gap-3 cursor-pointer group">
+                  <input
+                    class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary"
+                    type="checkbox"
+                    [formControlName]="tipo.tipoEventoId"
+                  />
+                  <span class="text-body-sm group-hover:text-primary transition-colors">{{
+                    tipo.tipoEventoId | titlecase
+                  }}</span>
+                </label>
+              }
+            </div>
+          </div>
+          <!-- Date Range -->
+          <div>
+            <label
+              for="date-range-init-input"
+              class="font-label-md text-label-md text-secondary block mb-md"
+              >RANGO DE FECHAS</label
+            >
+            <div class="space-y-sm">
+              <input
+                id="date-range-init-input"
+                class="w-full rounded-lg border border-outline-variant text-body-sm py-2 px-3 focus:ring-primary focus:border-primary shadow-sm"
+                type="date"
+                formControlName="fechaInicio"
+              />
+              <input
+                id="date-range-end-input"
+                aria-label="Fecha final del rango"
+                class="w-full rounded-lg border border-outline-variant text-body-sm py-2 px-3 focus:ring-primary focus:border-primary shadow-sm"
+                type="date"
+                formControlName="fechaFin"
+              />
+            </div>
+          </div>
+          <!-- Venue Selector -->
+          <div>
+            <label
+              class="font-label-md text-label-md text-secondary block mb-md"
+              for="venue-selector"
+              >RECINTO</label
+            >
+            <select
+              id="venue-selector"
+              class="w-full rounded-lg border border-outline-variant text-body-sm py-2 px-3 focus:ring-primary focus:border-primary shadow-sm"
+              formControlName="venueId"
+            >
+              <option value="">Todos los recintos</option>
+              @for (venue of venues(); track venue.venueId) {
+                <option [value]="venue.venueId">{{ venue.nombre }}</option>
+              }
+            </select>
+          </div>
+          <!-- Status Selector -->
+          <div>
+            <span class="font-label-md text-label-md text-secondary block mb-md">ESTADO</span>
+            <div class="flex flex-wrap gap-sm">
+              <button
+                type="button"
+                (click)="setEstado('Activo')"
+                class="px-4 py-1.5 rounded-full font-label-md text-label-md transition-all"
+                [class.bg-primary]="filterForm.get('estado')?.value === 'Activo'"
+                [class.text-on-primary]="filterForm.get('estado')?.value === 'Activo'"
+                [class.border]="filterForm.get('estado')?.value !== 'Activo'"
+                [class.border-outline-variant]="filterForm.get('estado')?.value !== 'Activo'"
+                [class.hover:border-primary]="filterForm.get('estado')?.value !== 'Activo'"
+                [class.hover:text-primary]="filterForm.get('estado')?.value !== 'Activo'"
+              >
+                Activo
+              </button>
+              <button
+                type="button"
+                (click)="setEstado('Completado')"
+                class="px-4 py-1.5 rounded-full font-label-md text-label-md transition-all"
+                [class.bg-primary]="filterForm.get('estado')?.value === 'Completado'"
+                [class.text-on-primary]="filterForm.get('estado')?.value === 'Completado'"
+                [class.border]="filterForm.get('estado')?.value !== 'Completado'"
+                [class.border-outline-variant]="filterForm.get('estado')?.value !== 'Completado'"
+                [class.hover:border-primary]="filterForm.get('estado')?.value !== 'Completado'"
+                [class.hover:text-primary]="filterForm.get('estado')?.value !== 'Completado'"
+              >
+                Completado
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </aside>
+    <!-- Content Grid -->
+    <section class="flex-grow">
+      <div class="flex items-center justify-between mb-lg">
+        <span class="text-body-sm text-secondary">Mostrando {{ eventos().length }} resultados</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-lg">
+        @for (evento of eventos(); track evento.nombreEvento) {
+          <app-card-evento [evento]="evento"></app-card-evento>
+        } @empty {
+          <div class="col-span-full text-center py-xl text-secondary font-title-medium">
+            No se encontraron eventos con los filtros seleccionados.
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+</div>

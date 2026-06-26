@@ -1,0 +1,70 @@
+<article
+  class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden event-card-hover flex flex-col h-full"
+>
+  <div class="aspect-[16/9] relative">
+    @switch (evento.tipoEventoId.toUpperCase()) {
+      @case (EVENT_TYPES.TALLER) {
+        <img
+          [alt]="evento.nombreEvento"
+          class="w-full h-full object-cover"
+          src="/assets/img/taller.webp"
+        />
+      }
+      @case (EVENT_TYPES.CONCIERTO) {
+        <img
+          [alt]="evento.nombreEvento"
+          class="w-full h-full object-cover"
+          src="/assets/img/concierto.webp"
+        />
+      }
+      @default {
+        <img
+          [alt]="evento.nombreEvento"
+          class="w-full h-full object-cover"
+          src="/assets/img/conferencia.webp"
+        />
+      }
+    }
+
+    <div class="absolute top-3 left-3 flex gap-2">
+      <span
+        class="bg-primary/90 text-on-primary px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider backdrop-blur-sm"
+        >{{ evento.tipoEventoId | titlecase }}</span
+      >
+    </div>
+    <div class="absolute bottom-3 right-3">
+      <span
+        class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-[11px] font-bold"
+        >{{ evento.estadoEventoId | uppercase }}</span
+      >
+    </div>
+  </div>
+  <div class="p-lg flex flex-col flex-grow">
+    <h2 class="font-title-lg text-title-lg text-on-background mb-sm leading-tight">
+      {{ evento.nombreEvento }}
+    </h2>
+    <div class="space-y-2 mb-md">
+      <div class="flex items-center gap-2 text-secondary">
+        <span class="material-symbols-outlined text-[20px]">calendar_today</span>
+        <span class="text-body-sm">{{ evento.fechaInicio | date: 'MMM d, y • h:mm a' }}</span>
+      </div>
+      <div class="flex items-center gap-2 text-secondary">
+        <span class="material-symbols-outlined text-[20px]">location_on</span>
+        <span class="text-body-sm">{{ evento.venue.nombre }}</span>
+      </div>
+    </div>
+    <div class="mt-auto pt-md border-t border-outline-variant flex items-center justify-between">
+      <span class="font-headline-md text-primary">{{ evento.precio | currency }}</span>
+      @if (
+        evento.estadoEventoId.toUpperCase() === EVENT_STATUS.ACTIVO && evento.soldOut === false
+      ) {
+        <a
+          class="bg-primary text-on-primary px-6 py-2 rounded-lg font-label-md text-label-md hover:opacity-90 transition-all"
+          [href]="'/reservar/' + evento.eventoId"
+        >
+          Reservar
+        </a>
+      }
+    </div>
+  </div>
+</article>

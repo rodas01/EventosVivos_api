@@ -1,7 +1,24 @@
-<app-header></app-header>
+@if (internal()) {
+  <app-internal-menu></app-internal-menu>
 
-<main class="max-w-[1280px] mx-auto px-margin-desktop py-xl min-h-screen">
-  <router-outlet></router-outlet>
-</main>
+  <app-internal-header></app-internal-header>
 
-<app-footer></app-footer>
+  <main class="ml-64 p-lg">
+    <div class="max-w-[1280px] mx-auto space-y-lg">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+} @else {
+  @if (showHeader()) {
+    <app-header></app-header>
+  }
+
+  <main class="max-w-[1280px] mx-auto px-margin-desktop py-xl min-h-screen">
+    <router-outlet></router-outlet>
+  </main>
+
+  @if (showFooter()) {
+    <app-footer></app-footer>
+  }
+}
+

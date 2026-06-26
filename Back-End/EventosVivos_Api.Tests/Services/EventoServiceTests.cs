@@ -281,6 +281,39 @@ namespace EventosVivos_Api.Tests.Services
             Assert.AreEqual(EventStatusConstants.Completado, result.First().EstadoEventoId);
         }
 
+        [TestMethod]
+        public async Task GetEventoByIdAsync_WithValidId_ReturnsSuccessResult_WithEventoDto()
+        {
+            // Arrange
+            Assert.IsNotNull(_context);
+            var service = new EventoService(_context);
+
+            // Act
+            var result = await service.GetEventoByIdAsync(1);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.IsSuccess);
+            Assert.IsNotNull(result.Value);
+            Assert.AreEqual("Concierto de Rock", result.Value.NombreEvento);
+        }
+
+        [TestMethod]
+        public async Task GetEventoByIdAsync_WithNonExistentId_ReturnsFailureResult_WithNotFoundError()
+        {
+            // Arrange
+            Assert.IsNotNull(_context);
+            var service = new EventoService(_context);
+
+            // Act
+            var result = await service.GetEventoByIdAsync(999);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsFalse(result.IsSuccess);
+            Assert.AreEqual(MessageConstants.EventNotFoundError, result.Error);
+        }
+
         #endregion
 
         #region Pruebas de CrearEventoAsync

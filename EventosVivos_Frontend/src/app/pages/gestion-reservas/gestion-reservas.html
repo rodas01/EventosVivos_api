@@ -1,0 +1,276 @@
+<div class="flex justify-between items-end mb-xl">
+  <div>
+    <h2 class="font-headline-md text-headline-md text-on-surface">Confirmación de Pagos</h2>
+    <p class="text-on-surface-variant text-body-base">
+      Gestione y valide las transacciones pendientes para asegurar las reservas.
+    </p>
+  </div>
+</div>
+
+<div class="bg-surface-bright rounded-xl border border-outline-variant overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-surface-container-low border-b border-outline-variant">
+          <th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant">ID RESERVA</th>
+          <th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant">CLIENTE</th>
+          <th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant">EVENTO</th>
+          <th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant">FECHA</th>
+          <th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant">MONTO</th>
+          <th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant">ESTADO</th>
+          <th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant text-right">
+            ACCIONES
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-outline-variant">
+        @for (reserva of reservas(); track reserva.reservaId) {
+          <tr
+            [class.bg-tertiary/5]="
+              reserva.estadoReservaId.toUpperCase() === 'COMFIRMADA' ||
+              reserva.estadoReservaId.toUpperCase() === 'CONFIRMADA'
+            "
+            [class.bg-error-container/20]="
+              reserva.estadoReservaId.toUpperCase() === 'CANCELADA' ||
+              reserva.estadoReservaId.toUpperCase() === 'PERDIDA'
+            "
+            [class.opacity-80]="
+              reserva.estadoReservaId.toUpperCase() === 'COMFIRMADA' ||
+              reserva.estadoReservaId.toUpperCase() === 'CONFIRMADA' ||
+              reserva.estadoReservaId.toUpperCase() === 'CANCELADA' ||
+              reserva.estadoReservaId.toUpperCase() === 'PERDIDA'
+            "
+            class="hover:bg-surface-container-lowest transition-colors group"
+          >
+            <td class="px-lg py-5">
+              <span
+                [class.text-primary]="reserva.estadoReservaId.toUpperCase() === 'PAGO_PENDIENTE'"
+                [class.text-tertiary]="
+                  reserva.estadoReservaId.toUpperCase() === 'COMFIRMADA' ||
+                  reserva.estadoReservaId.toUpperCase() === 'CONFIRMADA'
+                "
+                [class.text-error]="
+                  reserva.estadoReservaId.toUpperCase() === 'CANCELADA' ||
+                  reserva.estadoReservaId.toUpperCase() === 'PERDIDA'
+                "
+                class="font-bold"
+              >
+                #R-{{ reserva.reservaId }}
+              </span>
+            </td>
+            <td class="px-lg py-5">
+              <div class="flex items-center gap-3">
+                <div
+                  [ngClass]="{
+                    'bg-primary-container/20 text-primary':
+                      reserva.estadoReservaId.toUpperCase() === 'PAGO_PENDIENTE',
+                    'bg-tertiary/20 text-tertiary':
+                      reserva.estadoReservaId.toUpperCase() === 'COMFIRMADA' ||
+                      reserva.estadoReservaId.toUpperCase() === 'CONFIRMADA',
+                    'bg-error-container/40 text-error':
+                      reserva.estadoReservaId.toUpperCase() === 'CANCELADA' ||
+                      reserva.estadoReservaId.toUpperCase() === 'PERDIDA',
+                  }"
+                  class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs"
+                >
+                  {{ getClienteInitials(reserva.nombreCliente) }}
+                </div>
+                <span class="font-medium text-on-surface">{{ reserva.nombreCliente }}</span>
+              </div>
+            </td>
+            <td class="px-lg py-5">
+              <span class="text-on-surface">{{ reserva.tituloEvento }}</span>
+            </td>
+            <td class="px-lg py-5 text-on-surface-variant text-body-sm">
+              {{ reserva.fechaReserva | date: 'dd MMM, yyyy' }}
+            </td>
+            <td class="px-lg py-5 font-bold text-on-surface">
+              {{ reserva.precioReserva | currency }}
+            </td>
+            <td class="px-lg py-5">
+              @if (reserva.estadoReservaId.toUpperCase() === 'PAGO_PENDIENTE') {
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-surface-container-high text-on-secondary-container border border-outline-variant"
+                >
+                  Pendiente de Pago
+                </span>
+              } @else if (
+                reserva.estadoReservaId.toUpperCase() === 'COMFIRMADA' ||
+                reserva.estadoReservaId.toUpperCase() === 'CONFIRMADA'
+              ) {
+                <div class="flex flex-col gap-1">
+                  <span
+                    class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-tertiary text-on-tertiary"
+                  >
+                    <span class="material-symbols-outlined !text-[14px]">check</span>
+                    Completado
+                  </span>
+                  <span class="text-[10px] font-mono text-tertiary text-center">
+                    {{ reserva.codigoReserva || 'EV-' + reserva.reservaId }}
+                  </span>
+                </div>
+              } @else {
+                <span
+                  class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-error text-on-error"
+                >
+                  <span class="material-symbols-outlined !text-[14px]">close</span>
+                  {{
+                    reserva.estadoReservaId.toUpperCase() === 'PERDIDA' ? 'Perdida' : 'Cancelada'
+                  }}
+                </span>
+              }
+            </td>
+            <td class="px-lg py-5 text-right">
+              @if (reserva.estadoReservaId.toUpperCase() === 'PAGO_PENDIENTE') {
+                <button
+                  (click)="openConfirmModal(reserva, 'confirmPayment')"
+                  class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md hover:brightness-110 transition-all shadow-sm"
+                >
+                  Confirmar Pago
+                </button>
+              } @else if (
+                reserva.estadoReservaId.toUpperCase() === 'COMFIRMADA' ||
+                reserva.estadoReservaId.toUpperCase() === 'CONFIRMADA'
+              ) {
+                <div class="flex flex-col items-end gap-2">
+                  <span class="text-on-surface-variant font-label-md text-label-md italic"
+                    >Pago ya confirmado</span
+                  >
+                  <button
+                    (click)="openConfirmModal(reserva, 'cancelBooking')"
+                    class="text-error border border-error px-3 py-1 rounded-lg font-label-md text-label-md hover:bg-error-container/20 transition-all pointer-events-auto"
+                  >
+                    Cancelar Reserva
+                  </button>
+                </div>
+              } @else {
+                <span class="text-error font-label-md text-label-md">Reserva expirada</span>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="px-lg py-xl text-center text-on-surface-variant text-body-base">
+              No se encontraron reservas registradas.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div
+    class="px-lg py-4 bg-surface-container-low border-t border-outline-variant flex items-center justify-between"
+  >
+    <span class="text-body-sm text-on-surface-variant"
+      >Mostrando {{ reservas().length }} reservas</span
+    >
+  </div>
+</div>
+
+<!-- Overlay Modal for confirm/cancel action -->
+@if (isModalOpen() && selectedReserva()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-lg bg-black/50 backdrop-blur-sm transition-opacity"
+  >
+    <div
+      class="bg-white rounded-2xl border border-outline-variant shadow-2xl max-w-[1280px] w-full overflow-hidden transform transition-all scale-100"
+    >
+      <!-- Modal Header -->
+      <div
+        class="p-md border-b border-outline-variant bg-surface-container-low flex justify-between items-center"
+      >
+        <h3 class="font-title-lg text-title-lg flex items-center gap-md">
+          <span
+            class="material-symbols-outlined"
+            [class.text-primary]="modalType() === 'confirmPayment'"
+            [class.text-error]="modalType() === 'cancelBooking'"
+          >
+            {{ modalType() === 'confirmPayment' ? 'check_circle' : 'warning' }}
+          </span>
+          {{ modalType() === 'confirmPayment' ? 'Confirmar Pago' : 'Cancelar Reserva' }}
+        </h3>
+        <button
+          (click)="closeConfirmModal()"
+          class="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded-full hover:bg-surface-container-highest"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-xl space-y-md">
+        @if (errorMessage()) {
+          <div
+            class="p-md rounded-lg bg-error-container text-on-error-container border border-error/20 flex items-center gap-sm text-body-sm mb-lg"
+          >
+            <span class="material-symbols-outlined text-[20px]">error</span>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
+
+        <p class="text-on-surface-variant font-body-base">
+          @if (modalType() === 'confirmPayment') {
+            ¿Está seguro de que desea confirmar el pago de esta reserva? Esto marcará la reserva
+            como completada y generará el código de entrada.
+          } @else {
+            ¿Está seguro de que desea cancelar esta reserva? Esta acción no se puede deshacer y las
+            entradas volverán a estar disponibles.
+          }
+        </p>
+
+        <!-- Reservation details card in modal -->
+        <div
+          class="p-md bg-surface-container-lowest rounded-xl border border-outline-variant space-y-xs"
+        >
+          <div
+            class="flex justify-between font-label-md text-label-md text-on-surface-variant uppercase"
+          >
+            <span>Reserva</span>
+            <span class="font-bold text-primary">#R-{{ selectedReserva()?.reservaId }}</span>
+          </div>
+          <div class="text-body-sm">
+            <strong class="text-on-surface">Cliente:</strong> {{ selectedReserva()?.nombreCliente }}
+          </div>
+          <div class="text-body-sm">
+            <strong class="text-on-surface">Evento:</strong> {{ selectedReserva()?.tituloEvento }}
+          </div>
+          <div class="text-body-sm">
+            <strong class="text-on-surface">Monto:</strong>
+            {{ selectedReserva()?.precioReserva | currency }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div
+        class="p-lg border-t border-outline-variant bg-surface-container-low flex justify-end gap-md"
+      >
+        <button
+          (click)="closeConfirmModal()"
+          [disabled]="isProcessing()"
+          class="px-xl py-md rounded-xl border border-outline text-on-surface font-bold hover:bg-surface-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          type="button"
+        >
+          No, Cancelar
+        </button>
+        <button
+          (click)="confirmAction()"
+          [disabled]="isProcessing()"
+          [class.bg-primary]="modalType() === 'confirmPayment'"
+          [class.bg-error]="modalType() === 'cancelBooking'"
+          class="px-xl py-md rounded-xl text-white font-bold hover:opacity-90 shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-xs"
+          type="button"
+        >
+          @if (isProcessing()) {
+            <span
+              class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
+            ></span>
+            Procesando...
+          } @else {
+            Sí, Confirmar
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

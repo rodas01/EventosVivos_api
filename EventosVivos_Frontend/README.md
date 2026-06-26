@@ -1,59 +1,84 @@
-# EventosVivosFrontend
+# EventosVivos Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.17.
+Este proyecto constituye la interfaz de usuario de **EventosVivos**, una aplicación web SPA construida con **Angular** y TypeScript. Consume los servicios RESTful del backend para permitir la visualización de eventos, la creación y compra de entradas, el historial de reservas de clientes y la administración de transacciones y reportes.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🛠️ Arquitectura y Características de Diseño
 
-```bash
-ng serve
-```
+El frontend implementa prácticas modernas de desarrollo en Angular:
+- **Standalone Components**: Eliminación de módulos clásicos para una estructura ligera y de fácil lectura.
+- **Signal Reactivity**: Uso de signals (`signal`, `computed`) para manejar estados locales reactivos (filtros, estados de carga, listas) de grano fino.
+- **Dynamic CSS & Tailwind**: Interfaces altamente estéticas, con badges coloreados por estado y layouts responsivos adaptados tanto para móviles como pantallas grandes.
+- **Reactive Forms & Custom Cross-Field Validators**:
+  - `futureDateValidator`: Garantiza que las fechas sean futuras.
+  - `weekendTimeValidator`: Valida la regla de negocio que restringe el inicio de eventos los fines de semana a un máximo de las 22:00h.
+  - `capacityValidator`: Validador de formulario cruzado que compara el límite del recinto seleccionado con el input de capacidad máxima del evento.
+  - `dateComparisonValidator`: Asegura que la fecha de finalización sea estrictamente posterior a la fecha de inicio.
+- **Session Protection**:
+  - `authGuard`: Protege rutas internas (como el Home del panel de administración).
+  - Interceptor HTTP: Agrega tokens o cabeceras necesarias y maneja redirecciones automáticas en caso de fallos.
+- **Interactive Modals**: Modales dinámicos desacoplados de confirmación (ej: LoginModal, confirmaciones en confirmación de pagos y cancelaciones).
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 📂 Páginas e Interfaz de Usuario
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- **Crear Eventos**: Formulario interactivo con validaciones robustas y dinámicas en tiempo real para publicar nuevas propuestas culturales.
+- **Eventos (Listado)**: Buscador con filtros por tipo de evento, recinto, fechas, estado y búsqueda de título.
+- **Reservas**: Formulario de compra de entradas con limitación de compra en función del precio del ticket y cercanía al evento (RF-03/RN-05).
+- **Mis Reservas**: Historial de compras por email, permitiendo la cancelación en línea.
+- **Reporte Eventos**: Vista de control que muestra porcentaje de ocupación, totales vendidos, ingresos estimados y clasificaciones de estados.
+- **Confirmación de Pagos (Gestión Reservas)**: Panel de administración para procesar confirmaciones de pagos pendientes y cancelaciones manuales con modales interactivos y registros ordenados por prioridad de pago.
 
-```bash
-ng generate component component-name
-```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🚀 Requisitos e Instalación Local
 
-```bash
-ng generate --help
-```
+### Prerrequisitos
+- Instalar [Node.js](https://nodejs.org/) (versión 18 o superior).
 
-## Building
+### Instalación y Servidor de Desarrollo
+1. Sitúese en el directorio del frontend:
+   ```bash
+   cd EventosVivos_Frontend
+   ```
+2. Instale los paquetes NPM de dependencias:
+   ```bash
+   npm install
+   ```
+3. Inicie el servidor local:
+   ```bash
+   npm run start
+   ```
+4. Abra su navegador e ingrese a `http://localhost:4200/`.
 
-To build the project run:
+---
 
-```bash
-ng build
-```
+## 🧪 Pruebas Automatizadas y Cobertura de Código
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Las pruebas unitarias están configuradas con **Vitest** para una compilación y ejecución ultrarrápida. Prueban el comportamiento de los componentes, la reactividad de signals, validadores de formularios y llamadas simuladas a servicios.
 
-## Running unit tests
+### Ejecución de las Pruebas Unitarias
+1. Sitúese en el directorio del frontend:
+   ```bash
+   cd EventosVivos_Frontend
+   ```
+2. Ejecute las pruebas unitarias:
+   ```bash
+   npm run test
+   ```
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Generación del Reporte de Cobertura (HTML)
+Para auditar la cobertura de código del frontend de forma gráfica e interactiva:
+1. Asegúrese de situarse en el directorio del frontend e instalar las dependencias:
+   ```bash
+   cd EventosVivos_Frontend
+   npm install
+   ```
+2. Ejecute el comando de cobertura:
+   ```bash
+   npm run test:coverage
+   ```
+3. Esto generará el reporte de cobertura en formato HTML dentro de la carpeta `coverage/EventosVivos_Frontend/`.
+4. Abra el archivo `index.html` en su navegador para inspeccionar los porcentajes y líneas cubiertas por componente.

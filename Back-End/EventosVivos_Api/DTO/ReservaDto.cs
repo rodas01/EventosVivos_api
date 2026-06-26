@@ -61,5 +61,10 @@ namespace EventosVivos_Api.DTO
         /// Nombre del venue o establecimiento donde se realizará el evento.
         /// </summary>
         public required string NombreVenue { get; set; }
+
+        /// <summary>
+        /// Identificador del tipo de evento.
+        /// </summary>
+        public string? TipoEventoId { get; set; }
     }
 }

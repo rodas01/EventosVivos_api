@@ -1,0 +1,11 @@
+export const EVENT_TYPES = {
+  CONCIERTO: 'CONCIERTO',
+  CONFERENCIA: 'CONFERENCIA',
+  TALLER: 'TALLER',
+} as const;
+
+export const EVENT_STATUS = {
+  ACTIVO: 'ACTIVO',
+  CANCELADO: 'CANCELADO',
+  COMPLETADO: 'COMPLETADO',
+} as const;
