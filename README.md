@@ -9,6 +9,8 @@ EventosVivos es una plataforma para la creación de eventos culturales, conferen
 - **Demo en vivo**: Puedes probar la aplicación en funcionamiento en [https://eventos-vivos.azurewebsites.net](https://eventos-vivos.azurewebsites.net).
 - **Diseño de Interfaz**: El diseño de la aplicación fue realizado mediante Inteligencia Artificial utilizando la herramienta **Stitch de Google**. Puedes ver los diseños y prototipos interactivos en el siguiente enlace: [Proyectos de Stitch - EventosVivos](https://stitch.withgoogle.com/projects/4130516836670989072).
 
+**Nota:** El demo puede demorar en cargar dado que la DB se pausa por inactividad
+
 ---
 
 ## 🏗️ Arquitectura General
