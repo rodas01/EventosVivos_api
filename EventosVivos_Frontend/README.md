@@ -70,10 +70,15 @@ Las pruebas unitarias están configuradas con **Vitest** para una compilación y
    ```
 
 ### Generación del Reporte de Cobertura (HTML)
-Para auditar la cobertura de código de forma gráfica e interactiva:
-1. Ejecute el comando de cobertura:
+Para auditar la cobertura de código del frontend de forma gráfica e interactiva:
+1. Asegúrese de situarse en el directorio del frontend e instalar las dependencias:
+   ```bash
+   cd EventosVivos_Frontend
+   npm install
+   ```
+2. Ejecute el comando de cobertura:
    ```bash
    npm run test:coverage
    ```
-2. Esto generará el reporte de cobertura en formato HTML dentro de la carpeta `coverage/EventosVivos_Frontend/`.
-3. Abra el archivo `index.html` en su navegador para inspeccionar los porcentajes y líneas cubiertas por componente.
+3. Esto generará el reporte de cobertura en formato HTML dentro de la carpeta `coverage/EventosVivos_Frontend/`.
+4. Abra el archivo `index.html` en su navegador para inspeccionar los porcentajes y líneas cubiertas por componente.

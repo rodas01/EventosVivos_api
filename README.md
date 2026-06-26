@@ -124,8 +124,10 @@ El proyecto incluye suites completas de pruebas unitarias para garantizar el cor
   npm run test
   ```
 - **Generar Reporte de Cobertura (HTML)**:
-  Ejecute el siguiente comando para correr las pruebas y generar las métricas de cobertura de código:
+  Asegúrese de situarse en el directorio del frontend, instale las dependencias y ejecute el comando de cobertura:
   ```bash
+  cd EventosVivos_Frontend
+  npm install
   npm run test:coverage
   ```
   Esto generará un reporte de cobertura en formato HTML interactivo dentro del directorio `coverage/EventosVivos_Frontend/`. Puede abrir el archivo `index.html` en cualquier navegador web para auditar el porcentaje de cobertura de cada archivo fuente.
