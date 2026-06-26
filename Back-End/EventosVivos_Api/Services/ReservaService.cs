@@ -325,7 +325,8 @@ namespace EventosVivos_Api.Services
                 CorreoCliente = r.Cliente?.Correo ?? string.Empty,
                 TituloEvento = r.Evento?.NombreEvento ?? string.Empty,
                 FechaEvento = r.Evento?.FechaInicio ?? DateTime.MinValue,
-                NombreVenue = r.Evento?.Venue?.Nombre ?? string.Empty
+                NombreVenue = r.Evento?.Venue?.Nombre ?? string.Empty,
+                TipoEventoId = r.Evento?.TipoEventoId ?? string.Empty
             };
         }
 

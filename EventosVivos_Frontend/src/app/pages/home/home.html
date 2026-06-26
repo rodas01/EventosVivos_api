@@ -1,0 +1,106 @@
+<!-- Header & Quick Action -->
+<div class="flex justify-between items-end pb-sm">
+  <div>
+    <h2 class="text-headline-md font-headline-md text-on-surface plus-jakarta">Panel de Control</h2>
+    <p class="text-on-surface-variant font-body-sm">
+      Bienvenido de nuevo. Aquí tienes un resumen de la actividad cultural de hoy.
+    </p>
+  </div>
+  <a
+    class="flex items-center gap-sm bg-primary text-on-primary px-lg py-3 rounded-lg font-title-lg hover:bg-primary-container transition-all shadow-lg shadow-primary/20 active:scale-95"
+    [routerLink]="'/crear-evento'"
+  >
+    <span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+    Crear Nuevo Evento
+  </a>
+</div>
+<!-- Recent Events Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
+  <div
+    class="px-lg py-md border-b border-outline-variant flex justify-between items-center bg-surface-bright"
+  >
+    <h3 class="font-title-lg text-on-surface plus-jakarta">Eventos</h3>
+    <div class="flex gap-sm"></div>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr
+          class="bg-surface-container-low text-on-surface-variant font-label-md text-xs uppercase tracking-wider"
+        >
+          <th class="px-lg py-md font-semibold">Título del Evento</th>
+          <th class="px-lg py-md font-semibold">Recinto</th>
+          <th class="px-lg py-md font-semibold">Fecha</th>
+          <th class="px-lg py-md font-semibold">Capacidad / Ventas</th>
+          <th class="px-lg py-md font-semibold text-right">Estado</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-outline-variant">
+        @for (reporte of reportes(); track reporte.nombreEvento) {
+          <tr
+            class="hover:bg-surface-container-lowest transition-colors"
+            style="transform: translateX(0px); transition: transform 0.2s ease-out"
+          >
+            <td class="px-lg py-md">
+              <div class="flex items-center gap-md">
+                <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                  <img
+                    class="w-full h-full object-cover"
+                    [src]="getImagenEvento(reporte.tipoEventoId)"
+                    [alt]="reporte.nombreEvento"
+                  />
+                </div>
+                <span class="font-body-base font-semibold text-on-surface">{{
+                  reporte.nombreEvento
+                }}</span>
+              </div>
+            </td>
+            <td class="px-lg py-md text-on-surface-variant font-body-sm">
+              {{ reporte.venue.nombre }}
+            </td>
+            <td class="px-lg py-md text-on-surface-variant font-body-sm">
+              {{ reporte.fechaInicio | date: 'dd MMM, HH:mm' }}
+            </td>
+            <td class="px-lg py-md w-64">
+              <div class="flex flex-col gap-1">
+                <div
+                  class="flex justify-between text-[11px] font-label-md"
+                  [class.text-error]="reporte.ocupacion > 100"
+                  [class.text-on-surface-variant]="reporte.ocupacion <= 100"
+                >
+                  <span>{{ getTextoOcupacion(reporte.ocupacion) }}</span>
+                  <span>{{ reporte.reservasVendidas }}/{{ reporte.capacidad }}</span>
+                </div>
+                <div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+                  <div
+                    class="h-full rounded-full"
+                    [class.bg-error]="reporte.ocupacion > 100"
+                    [class.bg-tertiary-container]="reporte.ocupacion === 100"
+                    [class.bg-primary]="reporte.ocupacion < 100"
+                    [style.width.%]="reporte.ocupacion > 100 ? 100 : reporte.ocupacion"
+                  ></div>
+                </div>
+              </div>
+            </td>
+            <td class="px-lg py-md text-right">
+              <span
+                class="px-md py-1 rounded-full text-xs font-label-md border"
+                [class]="
+                  'px-md py-1 rounded-full text-xs font-label-md border ' +
+                  getEstadoClass(reporte.estadoEventoId, reporte.ocupacion)
+                "
+              >
+                {{ getEstadoTexto(reporte.estadoEventoId, reporte.ocupacion) }}
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div
+    class="px-lg py-md border-t border-outline-variant flex justify-between items-center text-body-sm text-on-surface-variant"
+  >
+    <span class="">Mostrando {{ reportes().length }} eventos</span>
+  </div>
+</div>

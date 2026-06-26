@@ -1,0 +1,54 @@
+<!-- TopNavBar -->
+<nav
+  class="bg-surface-container-lowest dark:bg-on-background w-full top-0 sticky z-50 border-b border-outline-variant dark:border-on-secondary-fixed-variant flat no shadows"
+>
+  <div
+    class="flex justify-between items-center h-16 px-margin-desktop max-w-[1280px] mx-auto w-full"
+  >
+    <div class="flex items-center gap-xl">
+      <span class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed"
+        >EventosVivos</span
+      >
+      <div class="hidden md:flex items-center gap-lg">
+        <a
+          class="dark:text-primary-fixed border-primary font-label-md"
+          [routerLinkActive]="'text-primary font-bold pb-1 text-label-md border-b-2'"
+          [routerLink]="'/eventos'"
+          >Eventos</a
+        >
+
+        <a
+          class="dark:text-primary-fixed border-primary font-label-md"
+          [routerLinkActive]="'text-primary font-bold pb-1 text-label-md border-b-2'"
+          [routerLink]="['/mis-reservas']"
+          >Mis Reservas</a
+        >
+      </div>
+    </div>
+    <div class="flex items-center gap-md">
+      @if (!authService.token()) {
+        <button
+          class="text-primary font-bold font-label-md text-label-md px-4 py-2 hover:bg-surface-container-low transition-all rounded-lg"
+          (click)="openLoginModal()"
+        >
+          Iniciar Sesión
+        </button>
+      } @else {
+        <button
+          class="text-primary font-bold font-label-md text-label-md px-4 py-2 hover:bg-surface-container-low transition-all rounded-lg"
+          (click)="logout()"
+        >
+          Cerrar Sesión
+        </button>
+      }
+      <span class="material-symbols-outlined text-primary cursor-pointer text-3xl"
+        >account_circle</span
+      >
+    </div>
+  </div>
+</nav>
+
+<app-login-modal
+  [isOpen]="showLoginModal()"
+  (isOpenChange)="showLoginModal.set($event)"
+></app-login-modal>

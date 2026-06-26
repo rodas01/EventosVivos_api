@@ -1,0 +1,44 @@
+<!-- SideNavBar -->
+<aside
+  class="h-screen w-64 fixed left-0 top-0 bg-surface dark:bg-on-surface border-r border-outline-variant dark:border-outline flex flex-col py-xl px-md z-50"
+>
+  <div class="mb-xl px-sm">
+    <h1
+      class="text-headline-md font-headline-md text-primary dark:text-primary-fixed-dim plus-jakarta"
+    >
+      EventosVivos
+    </h1>
+    <p class="font-body-sm text-body-sm text-on-surface-variant">Cultural Organizer</p>
+  </div>
+  <nav class="flex-1 space-y-xs">
+    <!-- Dashboard Tab (Active) -->
+    <a
+      class="flex items-center gap-md px-md py-sm rounded-lg text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-dim/10 transition-colors"
+      [routerLink]="['/home']"
+      routerLinkActive="bg-surface-container border-r-4 font-bold text-primary"
+    >
+      <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+      <span class="font-body-base text-body-base">Dashboard</span>
+    </a>
+    <!-- Events Tab -->
+    <a
+      class="flex items-center gap-md px-md py-sm rounded-lg text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-dim/10 transition-colors"
+      [routerLink]="['/reporte-eventos']"
+      routerLinkActive="bg-surface-container border-r-4 font-bold text-primary"
+    >
+      <span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+      <span class="font-body-base text-body-base">Events</span>
+    </a>
+    <!-- Gestion de Reservas Tab -->
+    <a
+      class="flex items-center gap-md px-md py-sm rounded-lg text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-dim/10 transition-colors"
+      [routerLink]="['/gestion-reservas']"
+      routerLinkActive="bg-surface-container border-r-4 font-bold text-primary"
+    >
+      <span class="material-symbols-outlined" data-icon="confirmation_number"
+        >confirmation_number</span
+      >
+      <span class="font-body-base text-body-base">Gestión de Reservas</span>
+    </a>
+  </nav>
+</aside>

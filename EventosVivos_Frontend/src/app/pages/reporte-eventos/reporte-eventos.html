@@ -1,0 +1,116 @@
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-xl">
+  <div>
+    <h2 class="font-display-lg text-display-lg text-on-surface">Gestión de Eventos</h2>
+    <p class="text-on-surface-variant font-body-base text-body-base">
+      Supervise el rendimiento y la disponibilidad de sus eventos culturales.
+    </p>
+  </div>
+  <div class="flex gap-md">
+    <a
+      class="flex items-center gap-xs px-lg py-md bg-primary text-on-primary rounded-xl font-label-md text-label-md hover:opacity-90 active:scale-95 transition-all"
+      [routerLink]="'/crear-evento'"
+    >
+      <span class="material-symbols-outlined text-[18px]">add</span>
+      Nuevo Evento
+    </a>
+  </div>
+</div>
+<!-- Management Table Container -->
+<div
+  class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm"
+>
+  <table class="w-full text-left border-collapse">
+    <thead>
+      <tr class="bg-surface-container-low border-b border-outline-variant">
+        <th class="px-lg py-md font-label-md text-label-md text-on-surface-variant">
+          Evento &amp; Fecha
+        </th>
+        <th class="px-lg py-md font-label-md text-label-md text-on-surface-variant">
+          Tickets Vendidos
+        </th>
+        <th class="px-lg py-md font-label-md text-label-md text-on-surface-variant">
+          Disponibles (Neto)
+        </th>
+        <th class="px-lg py-md font-label-md text-label-md text-on-surface-variant">Ocupación</th>
+        <th class="px-lg py-md font-label-md text-label-md text-on-surface-variant">Ingresos</th>
+        <th class="px-lg py-md font-label-md text-label-md text-on-surface-variant">Estado</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-outline-variant">
+      @for (reporte of reportes(); track reporte.nombreEvento) {
+        <tr
+          class="hover:bg-surface-container-low transition-colors"
+          [class.opacity-70]="reporte.estadoEventoId === 'CANCELADO'"
+        >
+          <td class="px-lg py-lg">
+            <div class="flex items-center gap-md">
+              <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                <img
+                  class="w-full h-full object-cover"
+                  [src]="getImagenEvento(reporte.tipoEventoId)"
+                  [alt]="reporte.nombreEvento"
+                />
+              </div>
+              <div>
+                <p
+                  class="font-title-lg text-title-lg text-on-surface"
+                  [class.line-through]="reporte.estadoEventoId === 'CANCELADO'"
+                >
+                  {{ reporte.nombreEvento }}
+                </p>
+                <p class="text-body-sm text-on-surface-variant">
+                  {{ reporte.fechaInicio | date: 'dd MMM, yyyy • HH:mm' }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td class="px-lg py-lg">
+            <span class="font-body-base text-body-base">{{ reporte.reservasVendidas }}</span>
+          </td>
+          <td class="px-lg py-lg">
+            <div class="flex flex-col">
+              <span class="font-body-base text-body-base">{{ reporte.reservasDisponibles }}</span>
+            </div>
+          </td>
+          <td class="px-lg py-lg">
+            <div class="w-32">
+              <div class="flex justify-between items-center mb-xs">
+                <span class="text-body-sm font-body-sm">{{ reporte.ocupacion }}%</span>
+              </div>
+              <div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+                <div
+                  class="h-full rounded-full"
+                  [class.bg-error]="reporte.ocupacion > 100"
+                  [class.bg-tertiary]="reporte.ocupacion === 100"
+                  [class.bg-primary]="reporte.ocupacion < 100"
+                  [style.width.%]="reporte.ocupacion > 100 ? 100 : reporte.ocupacion"
+                ></div>
+              </div>
+            </div>
+          </td>
+          <td class="px-lg py-lg font-bold text-on-surface">
+            {{ reporte.totalIngresos | currency: 'USD' : 'symbol' : '1.0-0' }}
+          </td>
+          <td class="px-lg py-lg">
+            <span
+              class="px-md py-xs rounded-full font-label-md text-[11px] uppercase tracking-wide border"
+              [class]="
+                'px-md py-xs rounded-full font-label-md text-[11px] uppercase tracking-wide border ' +
+                getEstadoClass(reporte.estadoEventoId, reporte.ocupacion)
+              "
+            >
+              {{ getEstadoTexto(reporte.estadoEventoId, reporte.ocupacion) }}
+            </span>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  <!-- Table Footer/Pagination -->
+  <div
+    class="px-lg py-md flex items-center justify-between bg-surface-bright border-t border-outline-variant"
+  >
+    <p class="text-body-sm text-on-surface-variant">Mostrando {{ reportes().length }} eventos</p>
+  </div>
+</div>

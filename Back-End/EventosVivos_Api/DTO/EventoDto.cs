@@ -4,6 +4,7 @@ namespace EventosVivos_Api.DTO
 {
     public class EventoDto
     {
+        public int EventoId { get; set; }
         public required string NombreEvento { get; set; }
         public required string Descripcion { get; set; }
         public required VenueDto Venue { get; set; }
@@ -14,6 +15,7 @@ namespace EventosVivos_Api.DTO
         public required string TipoEventoId { get; set; }
         public required string EstadoEventoId { get; set; }
         public required bool SoldOut { get; set; }
+        public int EntradasDisponibles { get; set; }
     }
 
     public class VenueDto

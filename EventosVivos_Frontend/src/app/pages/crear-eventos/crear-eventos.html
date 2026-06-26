@@ -1,0 +1,305 @@
+<div class="flex flex-col gap-lg">
+  <div class="flex justify-between items-end">
+    <div>
+      <h2 class="font-display-lg text-display-lg text-on-surface tracking-tight">Nuevo Evento</h2>
+      <p class="text-on-surface-variant font-body-base mt-xs">
+        Complete los detalles para publicar un nuevo evento cultural.
+      </p>
+    </div>
+  </div>
+  <!-- Form Card -->
+  <div class="bg-white rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
+    <div class="p-md border-b border-outline-variant bg-surface-container-low/50">
+      <h3 class="font-title-lg text-title-lg flex items-center gap-md">
+        <span class="material-symbols-outlined text-primary">edit_calendar</span>
+        Detalles del Evento
+      </h3>
+    </div>
+    <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="p-xl space-y-xl">
+      @if (errorMessage()) {
+        <div
+          class="p-md rounded-lg bg-error-container text-on-error-container border border-error/20 flex items-center gap-sm text-body-sm mb-lg"
+        >
+          <span class="material-symbols-outlined text-[20px]">error</span>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <!-- Basic Info Section -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-xl">
+        <div class="md:col-span-2 space-y-xs">
+          <label
+            class="font-label-md text-label-md text-on-surface-variant uppercase ml-1"
+            for="input-event-title"
+            >Título del Evento</label
+          >
+          <input
+            id="input-event-title"
+            formControlName="titulo"
+            class="w-full rounded-lg border border-outline-variant shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 p-xs font-body-base text-body-base"
+            maxlength="100"
+            placeholder="Ej: Concierto de Jazz en el Parque"
+            type="text"
+          />
+          <p class="text-[11px] text-on-surface-variant ml-1">Mínimo 5 caracteres, máximo 100.</p>
+          @if (eventForm.get('titulo')?.invalid && eventForm.get('titulo')?.touched) {
+            <p class="text-error text-body-sm mt-1">
+              El título es obligatorio y debe tener menos de 100 caracteres.
+            </p>
+          }
+        </div>
+        <div class="md:col-span-2 space-y-xs">
+          <label
+            class="font-label-md text-label-md text-on-surface-variant uppercase ml-1"
+            for="input-event-description"
+            >Descripción</label
+          >
+          <textarea
+            id="input-event-description"
+            formControlName="descripcion"
+            class="w-full rounded-lg border border-outline-variant shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 p-xs font-body-base text-body-base"
+            maxlength="500"
+            placeholder="Describa la propuesta cultural, artistas invitados y cronograma..."
+            rows="4"
+          ></textarea>
+          @if (eventForm.get('descripcion')?.invalid && eventForm.get('descripcion')?.touched) {
+            <p class="text-error text-body-sm mt-1">
+              La descripción es obligatoria (máximo 500 caracteres).
+            </p>
+          }
+        </div>
+        <!-- Venue & Capacity -->
+        <div class="space-y-xs">
+          <label
+            class="font-label-md text-label-md text-on-surface-variant uppercase ml-1"
+            for="input-venue"
+          >
+            Venue / Local
+          </label>
+          <div class="relative">
+            <select
+              id="input-venue"
+              formControlName="idVenue"
+              class="w-full rounded-lg border border-outline-variant shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 p-xs font-body-base text-body-base appearance-none bg-white"
+            >
+              <option disabled="" selected="" value="">Seleccione un lugar</option>
+              @for (venue of venues(); track venue.venueId) {
+                <option [value]="venue.venueId">
+                  {{ venue.nombre }} - Cap. {{ venue.capacidadMaxima }}
+                </option>
+              }
+            </select>
+            <span
+              class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant"
+              >expand_more</span
+            >
+          </div>
+          @if (eventForm.get('idVenue')?.invalid && eventForm.get('idVenue')?.touched) {
+            <p class="text-error text-body-sm mt-1">El recinto es obligatorio.</p>
+          }
+        </div>
+        <div class="space-y-xs">
+          <label
+            class="font-label-md text-label-md text-on-surface-variant uppercase ml-1"
+            for="input-capacity"
+          >
+            Capacidad Máxima
+          </label>
+          <div class="relative">
+            <input
+              id="input-capacity"
+              formControlName="capacidadMaxima"
+              class="w-full rounded-lg border border-outline-variant shadow-sm focus:ring-2 p-xs font-body-base text-body-base"
+              [class.border-error]="
+                (eventForm.get('capacidadMaxima')?.invalid ||
+                  eventForm.hasError('capacityExceeded')) &&
+                eventForm.get('capacidadMaxima')?.touched
+              "
+              [class.focus:border-error]="
+                (eventForm.get('capacidadMaxima')?.invalid ||
+                  eventForm.hasError('capacityExceeded')) &&
+                eventForm.get('capacidadMaxima')?.touched
+              "
+              [class.focus:ring-error/20]="
+                (eventForm.get('capacidadMaxima')?.invalid ||
+                  eventForm.hasError('capacityExceeded')) &&
+                eventForm.get('capacidadMaxima')?.touched
+              "
+              [class.focus:border-primary]="
+                !(
+                  (eventForm.get('capacidadMaxima')?.invalid ||
+                    eventForm.hasError('capacityExceeded')) &&
+                  eventForm.get('capacidadMaxima')?.touched
+                )
+              "
+              [class.focus:ring-primary/20]="
+                !(
+                  (eventForm.get('capacidadMaxima')?.invalid ||
+                    eventForm.hasError('capacityExceeded')) &&
+                  eventForm.get('capacidadMaxima')?.touched
+                )
+              "
+              placeholder="Ej: 150"
+              type="number"
+            />
+            @if (
+              (eventForm.get('capacidadMaxima')?.invalid ||
+                eventForm.hasError('capacityExceeded')) &&
+              eventForm.get('capacidadMaxima')?.touched
+            ) {
+              <span
+                class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 text-error"
+                >warning</span
+              >
+            }
+          </div>
+          @if (
+            eventForm.get('capacidadMaxima')?.invalid && eventForm.get('capacidadMaxima')?.touched
+          ) {
+            <p class="text-error text-body-sm mt-1">
+              La capacidad máxima es obligatoria y debe ser mayor a 0.
+            </p>
+          }
+          @if (
+            eventForm.hasError('capacityExceeded') &&
+            eventForm.get('capacidadMaxima')?.touched &&
+            !eventForm.get('capacidadMaxima')?.invalid
+          ) {
+            <p class="text-[11px] text-error ml-1 font-medium flex items-center gap-1">
+              La capacidad excede el límite del venue (Máx:
+              {{ eventForm.getError('capacityExceeded')?.max }})
+            </p>
+          }
+        </div>
+        <!-- Date & Time -->
+        <div class="space-y-xs">
+          <label
+            class="font-label-md text-label-md text-on-surface-variant uppercase ml-1"
+            for="input-start-date"
+          >
+            Fecha y Hora de Inicio
+          </label>
+          <div class="relative">
+            <input
+              id="input-start-date"
+              formControlName="fechaHoraInicio"
+              class="w-full rounded-lg border border-outline-variant shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 p-xs font-body-base text-body-base"
+              type="datetime-local"
+            />
+            <span
+              class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant"
+              >calendar_today</span
+            >
+          </div>
+          @if (
+            eventForm.get('fechaHoraInicio')?.invalid && eventForm.get('fechaHoraInicio')?.touched
+          ) {
+            @if (eventForm.get('fechaHoraInicio')?.hasError('required')) {
+              <p class="text-error text-body-sm mt-1">La fecha de inicio es obligatoria.</p>
+            }
+            @if (eventForm.get('fechaHoraInicio')?.hasError('notFuture')) {
+              <p class="text-error text-body-sm mt-1">La fecha de inicio debe ser futura.</p>
+            }
+            @if (eventForm.get('fechaHoraInicio')?.hasError('weekendTimeExceeded')) {
+              <p class="text-error text-body-sm mt-1">Los fines de semana la hora de inicio no puede ser mayor a las 22:00.</p>
+            }
+          }
+        </div>
+        <div class="space-y-xs">
+          <label
+            class="font-label-md text-label-md text-on-surface-variant uppercase ml-1"
+            for="input-end-date"
+          >
+            Fecha y Hora de Fin
+          </label>
+          <div class="relative">
+            <input
+              id="input-end-date"
+              formControlName="fechaHoraFin"
+              class="w-full rounded-lg border border-outline-variant shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 p-xs font-body-base text-body-base"
+              type="datetime-local"
+            />
+            <span
+              class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant"
+              >event_busy</span
+            >
+          </div>
+          @if (eventForm.get('fechaHoraFin')?.invalid && eventForm.get('fechaHoraFin')?.touched) {
+            <p class="text-error text-body-sm mt-1">La fecha de fin es obligatoria.</p>
+          }
+          @if (eventForm.hasError('endBeforeStart') && eventForm.get('fechaHoraFin')?.touched) {
+            <p class="text-error text-body-sm mt-1">
+              La fecha de fin debe ser posterior a la de inicio.
+            </p>
+          }
+        </div>
+        <!-- Price & Type -->
+        <div class="space-y-xs">
+          <label
+            class="font-label-md text-label-md text-on-surface-variant uppercase ml-1"
+            for="input-price"
+            >Precio de Entrada</label
+          >
+          <div class="relative flex items-center">
+            <span class="absolute left-md font-bold text-on-surface-variant">$</span>
+            <input
+              id="input-price"
+              formControlName="precioEntrada"
+              class="w-full rounded-lg border border-outline-variant shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 p-xs pl-12 font-body-base text-body-base"
+              placeholder="0.00"
+              type="number"
+            />
+          </div>
+          @if (eventForm.get('precioEntrada')?.invalid && eventForm.get('precioEntrada')?.touched) {
+            <p class="text-error text-body-sm mt-1">
+              El precio es obligatorio y debe ser mayor que 0 (no se permiten ceros o negativos).
+            </p>
+          }
+        </div>
+        <div class="space-y-xs">
+          <span class="font-label-md text-label-md text-on-surface-variant uppercase ml-1"
+            >Tipo de Evento</span
+          >
+          <div class="flex gap-xs pt-xs">
+            @for (tipo of tipoEventos(); track tipo.tipoEventoId) {
+              <label class="flex-1 cursor-pointer">
+                <input
+                  class="sr-only peer"
+                  type="radio"
+                  [value]="tipo.tipoEventoId"
+                  formControlName="tipoEventoId"
+                />
+                <div
+                  class="p-xs text-center border border-outline-variant rounded-lg peer-checked:bg-primary-container peer-checked:text-white peer-checked:border-primary transition-all font-label-md text-label-md"
+                >
+                  {{ tipo.tipoEventoId }}
+                </div>
+              </label>
+            }
+          </div>
+          @if (eventForm.get('tipoEventoId')?.invalid && eventForm.get('tipoEventoId')?.touched) {
+            <p class="text-error text-body-sm mt-1">Debe seleccionar un tipo de evento.</p>
+          }
+        </div>
+      </div>
+      <!-- Action Buttons -->
+      <div class="pt-xl border-t border-outline-variant flex items-center justify-end gap-md">
+        <button
+          (click)="cancel()"
+          class="px-xl py-md rounded-lg border border-outline text-on-surface font-bold hover:bg-surface-container transition-colors"
+          type="button"
+        >
+          Cancelar
+        </button>
+        <button
+          [disabled]="isSubmitting()"
+          class="px-2xl py-md rounded-lg bg-primary text-white font-bold hover:opacity-90 shadow-lg shadow-primary/20 transform active:scale-95 transition-all flex items-center gap-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          type="submit"
+        >
+          <span class="material-symbols-outlined">send</span>
+          Crear Evento
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

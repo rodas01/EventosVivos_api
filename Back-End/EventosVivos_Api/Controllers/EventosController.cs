@@ -23,6 +23,18 @@ namespace EventosVivos_Api.Controllers
             return Ok(eventos);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetEventoById(int id)
+        {
+            var result = await _eventoService.GetEventoByIdAsync(id);
+            if (!result.IsSuccess)
+            {
+                return NotFound(new { message = result.Error });
+            }
+
+            return Ok(result.Value);
+        }
+
         [HttpPost("crear-evento")]
         [Authorize]
         public async Task<IActionResult> CrearEvento([FromBody] CrearEventoDto eventoDto)
