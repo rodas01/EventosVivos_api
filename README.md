@@ -9,9 +9,11 @@ EventosVivos es una plataforma para la creación de eventos culturales, conferen
 El proyecto utiliza una arquitectura desacoplada tipo **Single Page Application (SPA)** con los siguientes pilares:
 
 ```
-[ Frontend: Angular (v17+) ] <--- HTTP REST ---> [ Backend: ASP.NET Core Web API (.NET 8) ]
+[ Frontend: Angular (v21) ] <--- HTTP REST ---> [ Backend: ASP.NET Core Web API (.NET 8) ]
                                                             |
-                                                 [ In-Memory Storage / Mock Repositories ]
+                                               [ Entity Framework Core (ORM) ]
+                                                            |
+                                                   [ Base de Datos SQL ]
 ```
 
 ### 1. Backend (`Back-End`)
@@ -31,11 +33,112 @@ Construido utilizando **Angular** moderno:
 
 ---
 
+## 🧭 Justificación de la Arquitectura
+
+Las decisiones estructurales de EventosVivos responden a criterios de **mantenibilidad**, **testabilidad** y **separación de responsabilidades** adecuados al dominio del problema. A continuación se detalla el razonamiento detrás de cómo se organizó cada capa del sistema.
+
+---
+
+### 🔷 Separación Frontend / Backend (Arquitectura Desacoplada)
+
+El sistema está dividido en dos proyectos completamente independientes que se comunican exclusivamente mediante una **API REST HTTP**. Esta separación no es técnica sino conceptual: el backend es el **guardián de las reglas de negocio** y el frontend es el **canal de interacción con el usuario**. Ninguno conoce los detalles internos del otro.
+
+Esto implica que:
+- Si una regla de negocio cambia (ej: el límite de entradas por precio), el cambio ocurre **únicamente en el backend**, sin necesidad de modificar el frontend.
+- Si el diseño de la interfaz cambia, el **backend no se ve afectado**.
+- Ambos proyectos pueden ser probados de forma independiente con mocks del otro extremo.
+
+---
+
+### 🔷 Backend: Capas con Responsabilidad Única
+
+El backend se organiza en tres capas bien definidas que siguen el principio de **responsabilidad única (SRP)**:
+
+```
+HTTP Request
+     ↓
+[ Controller ]   →  Recibe la petición, valida la forma del dato (model binding), delega al servicio
+     ↓
+[  Service   ]   →  Aplica TODAS las reglas de negocio (RN-01 a RN-07), lanza excepciones si se violan
+     ↓
+[ Repository ]   →  Solo persiste o consulta datos. No conoce ninguna regla de negocio
+```
+
+**¿Por qué esta separación?**
+
+- Los **Controllers** no contienen `if` de negocio. Si un controller crece en lógica, es una señal de que algo está mal. Esta restricción hace que las pruebas de los servicios sean el centro de la cobertura de negocio.
+- Los **Services** son el núcleo del sistema. Concentrar aquí toda la lógica permite probar exhaustivamente las 7 reglas de negocio sin necesidad de levantar HTTP ni base de datos.
+- Los **Repositories** abstraen el origen de datos. Hoy es SQL Server vía Entity Framework; si en el futuro cambia a otro motor, ninguna capa de negocio se ve afectada.
+
+**DTOs como contrato público**
+
+Las entidades de base de datos nunca se exponen directamente en la API. Se utilizan **DTOs (Data Transfer Objects)** para:
+- Evitar la sobre-exposición de campos sensibles o internos.
+- Permitir que el modelo interno de la base de datos evolucione sin romper el contrato con el frontend.
+- Calcular y agregar campos derivados en la respuesta (ej: `EntradasDisponibles` se calcula como `Capacidad - SumaDeReservas` en el momento de la consulta, no se persiste).
+
+---
+
+### 🔷 Frontend: Componentes Aislados con Estado Local
+
+El frontend está organizado siguiendo el principio de **componentes autocontenidos**: cada componente es responsable de su propio estado, su propia lógica de presentación y su propia comunicación con la API a través de servicios inyectados.
+
+```
+[ Página / Componente Contenedor ]
+    ↓  inyecta
+[ Servicio HTTP ]   →  única fuente de verdad para llamadas a la API
+    ↓  emite datos al componente
+[ Estado local (Signals) ]   →  actualiza la vista de forma reactiva
+```
+
+**¿Por qué estado local y no un store global?**
+
+Los datos de cada página (`reservas`, `eventos`, `errorMessage`) no necesitan ser compartidos entre páginas distintas. Un store global centralizado (como NgRx/Redux) aportaría complejidad sin beneficio real para este dominio. El estado se coloca **donde se usa**, lo que reduce el acoplamiento entre páginas y facilita entender el flujo de datos con solo leer un archivo.
+
+**¿Por qué una carpeta `core/` separada de `pages/`?**
+
+```
+src/app/
+├── core/           → Infraestructura compartida (servicios, guards, interceptors, componentes globales)
+└── pages/          → Funcionalidades de negocio (cada página con sus propios componentes internos)
+```
+
+- `core/` contiene elementos que **no pertenecen a ninguna página específica**: el interceptor de autenticación, los guards de rutas, los servicios HTTP y los componentes de layout (header, footer). Son transversales al sistema.
+- `pages/` contiene cada caso de uso del usuario como una unidad autónoma. La página de reservas no conoce la de creación de eventos, y viceversa.
+
+Esta estructura permite que un desarrollador nuevo encuentre rápidamente dónde está la lógica de una funcionalidad sin necesidad de navegar por toda la aplicación.
+
+---
+
+### 🔷 Seguridad: Verificación Proactiva en el Cliente
+
+La autenticación sigue un flujo **stateless en el servidor y proactivo en el cliente**:
+
+1. El backend emite un **JWT** al autenticarse. No almacena sesiones; cada solicitud es autónoma.
+2. El **`AuthInterceptor`** intercepta todas las solicitudes HTTP salientes antes de enviarlas. Verifica si el token guardado en `localStorage` ha expirado; si es así, realiza el logout localmente y redirige al inicio **sin esperar a que el servidor rechace la petición**. Esto evita errores 401 inesperados para el usuario.
+3. El **`AuthGuard`** bloquea la navegación a rutas del panel administrativo si el usuario no está autenticado, actuando como primera línea de defensa en el enrutamiento.
+
+Esta arquitectura de seguridad en capas garantiza que el acceso no autorizado se detecte y gestione lo antes posible en el ciclo de vida de cada interacción.
+
+---
+
+### 🔷 Pruebas: Aislamiento Total de Dependencias
+
+Tanto en el backend como en el frontend, las pruebas están diseñadas para **no depender de infraestructura externa** (base de datos real, servidor HTTP, etc.):
+
+- En el **backend**, los servicios reciben sus dependencias por inyección. En las pruebas, se reemplazan por mocks o implementaciones en memoria, permitiendo validar cada regla de negocio de forma aislada y reproducible.
+- En el **frontend**, los servicios HTTP se reemplazan por mocks en el `TestBed` de Angular. Los componentes se prueban con datos controlados, verificando tanto la lógica TypeScript como el resultado en el DOM renderizado.
+
+Este enfoque garantiza que las pruebas sean rápidas, deterministas y no dependan del estado externo del sistema.
+
+---
+
 ## 🛠️ Tecnologías Utilizadas
 
 - **Backend**:
   - .NET 8 / C# 12
   - ASP.NET Core Web API
+  - Entity Framework Core
   - MSTest (Pruebas unitarias)
 - **Frontend**:
   - Angular (v21.2)
@@ -146,4 +249,3 @@ El backend utiliza **Entity Framework Core** para el mapeo objeto-relacional (OR
   - **Usuario Administrador**: Se registra automáticamente un usuario de prueba para gestionar eventos y reservas con las siguientes credenciales:
     - **Usuario**: `admin`
     - **Contraseña**: `Admin1234!`
-
